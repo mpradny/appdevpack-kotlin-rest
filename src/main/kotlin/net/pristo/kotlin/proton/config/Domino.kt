@@ -31,14 +31,16 @@ class DominoConfig(
         log.debug("Initializing Domino connection")
         val hostName = env.getProperty("domino.server") ?: throw IllegalArgumentException("server hostname not specified")
         val port = env.getProperty<Int>("domino.port") ?: throw IllegalArgumentException("server port not specified")
+        val database = env.getProperty("domino.database") ?: throw IllegalArgumentException("database not specified")
         val trustFile = env.getProperty("domino.security.trustFile") ?: throw IllegalArgumentException("trust file not specified")
         val certFile = env.getProperty("domino.security.certFile") ?: throw IllegalArgumentException("cert file not specified")
         val keyFile = env.getProperty("domino.security.keyFile") ?: throw IllegalArgumentException("key file not specified")
-        val database = env.getProperty("domino.database") ?: throw IllegalArgumentException("database not specified")
+        val idPassword = env.getProperty("domino.security.idPassword") ?: throw IllegalArgumentException("id password")
+
 
         val server = Server(
             hostName, port, getFile(trustFile), getFile(certFile),
-            getFile(keyFile), null, "", executorService
+            getFile(keyFile), null, idPassword, executorService
         )
 
         log.debug("Done initializing Domino connection")
