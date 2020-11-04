@@ -1,0 +1,12 @@
+logging:
+  level:
+    net.pristo: DEBUG
+domino:
+  executors: 2
+  server: srv1.pris.to
+  port: 3003
+  database: protontest.nsf
+  security:
+    trustFile: cert/trust.crt
+    certFile: cert/protonapp1.crt
+    keyFile: cert/protonapp1-pkcs8.key
