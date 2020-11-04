@@ -33,6 +33,11 @@ class EmployeeRepository(val db: Database) {
         return docsToEmployees(docs)
     }
 
+    fun find(id: String): Employee {
+        val fullDoc = db.readDocumentByUnid(id, docItems).get()
+        return docToEmployee(fullDoc)
+    }
+
     fun create(employee: Employee): Employee {
         log.debug("Starting user creation")
 
@@ -41,9 +46,7 @@ class EmployeeRepository(val db: Database) {
 
         log.debug("Done creating, read it back")
 
-        val fullDoc = db.readDocumentByUnid(res.unid, docItems).get()
-        return docToEmployee(fullDoc)
-
+        return find(res.unid)
     }
 
     private fun employeeToDoc(employee: Employee): Document {
@@ -56,10 +59,25 @@ class EmployeeRepository(val db: Database) {
         return Document(itemList)
     }
 
+    fun delete(id: String) {
+        db.deleteDocumentByUnid(id).get()
+    }
+
+    fun updateEmployee(id: String, employee: Employee): Employee {
+        val updateDoc = employeeToDoc(employee)
+
+        db.replaceDocumentsByUnid(mapOf(id to updateDoc.items)).get()
+
+        return find(id)
+    }
+
     fun docsToEmployees(docs: List<Document?>): MutableList<Employee> =
         docs.asSequence()
             .filterNotNull()
             .mapTo(mutableListOf()) { docToEmployee(it) }
 
     fun docToEmployee(doc: Document): Employee = Employee(doc)
+
+
+
 }

@@ -19,10 +19,29 @@ class EmployeeResource(val employeeRepository: EmployeeRepository) {
         return ResponseEntity(employeeRepository.findAll(), HttpStatus.OK)
     }
 
+    @GetMapping("/{id}")
+    fun getEmployee(@PathVariable id:String) : ResponseEntity<Employee> {
+        val employee = employeeRepository.find(id)
+
+        return ResponseEntity(employee, HttpStatus.OK)
+    }
+
     @PostMapping
-    fun createUser(@Valid @RequestBody employee: Employee): ResponseEntity<Employee> {
+    fun createEmployee(@Valid @RequestBody employee: Employee): ResponseEntity<Employee> {
         log.debug("REST request to save User : $employee")
         return ResponseEntity(employeeRepository.create(employee), HttpStatus.OK)
+    }
+
+    @PutMapping("/{id}")
+    fun updateEmployee(@PathVariable id:String, @Valid @RequestBody employee: Employee): ResponseEntity<Employee> {
+        log.debug("REST request to update User : $id")
+        return ResponseEntity(employeeRepository.updateEmployee(id, employee), HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{id}")
+    fun deleteEmployee(@PathVariable id:String): ResponseEntity<Void> {
+        employeeRepository.delete(id)
+        return ResponseEntity.noContent().build()
     }
 
     @ExceptionHandler(value = [(BulkOperationException::class)])
